@@ -1,9 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Paint the Chain</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint The Chain - The Decentralized Spectrum</title>
+
+    <!-- Meta Description for SEO -->
+    <meta name="description" content="Paint The Chain: A decentralized governance ecosystem powered by $COC, Color Coins, and deflationary burns. Play. Vote. Burn. Repeat.">
+
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom styles for the vibrant, modern aesthetic */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f7; /* Very light, clean background */
+            color: #1f2937; /* Dark text for high contrast */
+        }
+        .vibrant-bg {
+            /* Rainbow gradient for the signature look */
+            background: linear-gradient(135deg, #FF5733, #FFC300, #33FF57, #334EFF, #9933FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: #FF5733; /* fallback solid color */
+        }
+        .section-separator {
+            height: 2px;
+            background: linear-gradient(90deg, #FF5733, #334EFF);
+            width: 100px;
+            margin: 0 auto;
+        }
+        .card-glow {
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+        .card-glow:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+        .cta-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px 0 rgba(255, 165, 0, 0.4);
+        }
+        .cta-button:hover {
+            box-shadow: 0 6px 20px 0 rgba(255, 165, 0, 0.6);
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-  <h1>Hello World from Paint the Chain!</h1>
+    <!-- Navigation Bar -->
+    <nav class="bg-white p-4 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-extrabold vibrant-bg">Paint The Chain</h1>
+            <div class="flex space-x-6 text-sm font-semibold">
+                <a href="#governance" class="text-gray-600 hover:text-blue-600 transition duration-300">Governance</a>
+                <a href="#tokens" class="text-gray-600 hover:text-blue-600 transition duration-300">Tokens</a>
+                <a href="#scarcity" class="text-gray-600 hover:text-blue-600 transition duration-300">Scarcity</a>
+                <a href="#" target="_blank" class="px-4 py-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition cta-button">
+                    Launch DApp
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="py-24 md:py-32 text-center">
+        <div class="max-w-4xl mx-auto px-4">
+            <p class="text-lg font-medium text-gray-500 mb-2 uppercase tracking-widest">
+                Utility-First Governance
+            </p>
+            <h1 class="text-5xl md:text-7xl font-black mb-6 leading-none">
+                <span class="vibrant-bg">Play. Vote. Burn. Repeat.</span>
+            </h1>
+            <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+                $COC is the fuel for the decentralized spectrum. Vote on Creator Rewards, govern new token launches, and reinforce deflationary scarcity.
+            </p>
+            <!-- Call to Action Button -->
+            <a href="#" target="_blank" class="cta-button inline-block bg-yellow-500 text-white font-bold py-3 px-10 rounded-full text-lg shadow-lg hover:bg-yellow-600">
+                Connect Wallet & Vote Now
+            </a>
+        </div>
+    </header>
+
+    <!-- Governance Flow Section -->
+    <section id="governance" class="py-16 md:py-24 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-4">The Decentralized Flow</h2>
+            <div class="section-separator mb-16"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-5 items-center gap-8 text-center">
+                <!-- 1. Color Coins -->
+                <div class="md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-3">Color Coins</h3>
+                    <p class="text-gray-500 mb-4">The competitive pool. Each coin is a candidate for the rewards.</p>
+                    <div class="flex justify-center space-x-3">
+                        <span class="w-8 h-8 rounded-full bg-red-500 shadow-md"></span>
+                        <span class="w-8 h-8 rounded-full bg-blue-500 shadow-md"></span>
+                        <span class="w-8 h-8 rounded-full bg-green-500 shadow-md"></span>
+                        <span class="w-8 h-8 rounded-full bg-black shadow-md"></span>
+                    </div>
+                </div>
+
+                <!-- 2. COC Token (The Engine) -->
+                <div class="md:col-span-1">
+                    <div class="w-24 h-24 mx-auto flex items-center justify-center rounded-full bg-yellow-500 text-white text-xl font-bold shadow-xl">
+                        $COC
+                    </div>
+                    <p class="text-sm mt-3 font-semibold">Utility Token</p>
+                </div>
+
+                <!-- 3. Governance Vote -->
+                <div class="md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-3">Governance</h3>
+                    <p class="text-gray-500">Hold $COC to vote on reward allocation and launch new Color Coins.</p>
+                    <div class="mt-4 flex justify-center space-x-4">
+                        <span class="text-sm font-semibold text-blue-600">Reward Votes (Periodic)</span>
+                        <span class="text-sm font-semibold text-green-600">Launch Votes (As Needed)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Burn Mechanism Feature -->
+            <div id="scarcity" class="mt-20 flex flex-col md:flex-row items-center justify-between p-8 bg-yellow-500/10 rounded-xl border border-yellow-500/30">
+                <div class="text-left">
+                    <h3 class="text-2xl font-black text-yellow-700 mb-2">Monthly Hyper-Deflation</h3>
+                    <p class="text-gray-600">
+                        All governance and buyback activity culminates in a <strong>Ceremonial Burn</strong> — removing 70–100% of accumulated $COC monthly to ensure permanent scarcity.
+                    </p>
+                </div>
+                <div class="text-5xl font-extrabold text-yellow-600 mt-4 md:mt-0 md:ml-8">
+                    <span class="vibrant-bg">🔥 BURN</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Token Details Section -->
+    <section id="tokens" class="py-16 md:py-24 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-4">Core Token Functions</h2>
+            <div class="section-separator mb-16"></div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-6 rounded-2xl card-glow border-t-4 border-blue-500">
+                    <h3 class="text-xl font-bold mb-2">1. Decentralized Control</h3>
+                    <p class="text-gray-500">
+                        Use your $COC to select the winning Color Coin that receives the Creator Rewards pool, steering the project's financial incentives.
+                    </p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white p-6 rounded-2xl card-glow border-t-4 border-green-500">
+                    <h3 class="text-xl font-bold mb-2">2. New Spectrum Integration</h3>
+                    <p class="text-gray-500">
+                        Govern the introduction of new Color Coins on Pump.fun, deciding when and how the ecosystem expands its community base.
+                    </p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-white p-6 rounded-2xl card-glow border-t-4 border-red-500">
+                    <h3 class="text-xl font-bold mb-2">3. Permanent Deflation</h3>
+                    <p class="text-gray-500">
+                        The monthly burn strategy reinforces the value of $COC by permanently reducing the circulating supply, fueling the scarcity narrative.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Future Vision -->
+    <section class="py-16 md:py-24 bg-gray-100">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <h2 class="text-4xl font-black mb-4">The Creative Frontier</h2>
+            <p class="text-lg text-gray-600 mb-8">
+                Future development includes the launch of our gamified mechanic: an <strong>on-chain web3 paint tool</strong> allowing users to create and mint their own color-linked NFTs.
+            </p>
+            <div class="text-6xl mb-4">🖌️🎨🖼️</div>
+            <a href="#roadmap" class="text-blue-600 hover:text-blue-800 font-semibold underline">
+                Read the Roadmap
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-500 mb-4 font-semibold">Play. Paint. Vote. Burn. Repeat.</p>
+            <div class="flex justify-center space-x-6">
+                <a href="https://docs.google.com/spreadsheets/d/1SehDYB_EunEeou19BH1ptqxCY5QQ0bA8nGFiEHQu1Ik/" target="_blank" class="text-gray-400 hover:text-blue-500 transition duration-300">Docs</a>
+                <a href="https://x.com/coinofcolors" target="_blank" class="text-gray-400 hover:text-blue-500 transition duration-300">Twitter</a>
+                <a href="https://t.me/coinofcolors" target="_blank" class="text-gray-400 hover:text-blue-500 transition duration-300">Telegram</a>
+            </div>
+            <p class="text-xs mt-4 text-gray-400">&copy; 2025 Paint The Chain. All Rights Reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>
