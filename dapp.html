@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COC Reward Allocation Dashboard</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d; /* Dark background */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="min-h-screen p-4 sm:p-8 text-white">
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-600 rounded-lg p-2">
+                Paint The Chain Allocation Dashboard
+            </h1>
+            <p class="text-gray-400 mt-2">
+                $COC$ Holder Rewards & Multi-Chain Access Point
+            </p>
+        </header>
+
+        <!-- Status and Wallet Section -->
+        <div class="max-w-4xl mx-auto mb-10 p-6 bg-gray-800 rounded-xl shadow-2xl border border-gray-700/50">
+            <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+                
+                <!-- Connection Status -->
+                <div class="flex items-center space-x-3">
+                    <div id="connectionStatus" class="w-4 h-4 rounded-full bg-red-500 shadow-md animate-pulse"></div>
+                    <!-- Display includes network prefix (e.g., [SOL] Wallet:...) -->
+                    <span id="walletAddressDisplay" class="text-sm font-medium truncate text-gray-400">Wallet Disconnected</span>
+                </div>
+
+                <!-- Action Buttons Container -->
+                <div id="walletButtonContainer" class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+                    <!-- Buttons are dynamically controlled by JS to show Connect/Disconnect -->
+                </div>
+            </div>
+            
+            <!-- Auth Status: Now displays the full User ID -->
+            <p id="authStatus" class="text-xs text-center sm:text-left mt-4 text-purple-400 break-all">Authenticating user...</p>
+        </div>
+
+        <!-- TAB NAVIGATION -->
+        <div class="max-w-4xl mx-auto mb-6">
+            <div class="flex border-b border-gray-700">
+                <button id="tabColors" onclick="showTab('colors')" class="px-6 py-3 font-semibold text-lg transition duration-200 border-b-4 border-purple-500 text-purple-400 bg-gray-800/50">
+                    Color Coin Rewards
+                </button>
+                <button id="tabMemes" onclick="showTab('memes')" class="px-6 py-3 font-semibold text-lg transition duration-200 border-b-4 border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-600">
+                    Meme Coin Rewards
+                </button>
+            </div>
+        </div>
+
+        <!-- VOTING INTERFACES (TAB CONTENT) -->
+        <div id="votingContainer" class="max-w-4xl mx-auto">
+            
+            <!-- Tab 1: Colors Voting -->
+            <div id="colorsVotingSection" class="tab-content">
+                <h2 class="text-3xl font-bold mb-6 text-gray-200 border-b border-gray-700 pb-2">
+                    Color Coin Reward Allocation
+                </h2>
+                <p class="text-gray-400 mb-8">
+                    Allocate your $COC$ to support the next winning Color Coin community. Your $COC$ balance determines your weight.
+                </p>
+                <div id="colorCandidateContainer" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <p class="md:col-span-3 text-center text-gray-500">Loading allocation candidates...</p>
+                </div>
+            </div>
+            
+            <!-- Tab 2: Memes Voting -->
+            <div id="memesVotingSection" class="tab-content hidden">
+                <h2 class="text-3xl font-bold mb-6 text-gray-200 border-b border-gray-700 pb-2">
+                    Meme Coin Reward Allocation
+                </h2>
+                <p class="text-gray-400 mb-8">
+                    Allocate your $COC$ to support the next winning Meme Coin community. Your $COC$ balance determines your weight.
+                </p>
+                <div id="memeCandidateContainer" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <p class="md:col-span-4 text-center text-gray-500">Loading allocation candidates...</p>
+                </div>
+            </div>
+
+            <!-- Common Message Area -->
+            <div id="voteMessage" class="mt-8 text-center text-lg font-semibold hidden"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK & DApp Logic -->
+    <script type="module">
+        // --- MANDATORY FIREBASE IMPORTS ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, getDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Enable Firebase debug logging
+        setLogLevel('Debug'); 
+
+        // --- GLOBAL STATE & MANDATORY ENVIRONMENT VARIABLES ---
+        let app, db, auth, userId = null;
+        let currentTab = 'colors'; // Default active tab
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // Data for reward allocation candidates (Color Coins)
+        const colorCandidates = [
+            { id: 'red', name: '$RED', color: 'bg-red-500', theme: 'The Energy Core' },
+            { id: 'blue', name: '$BLUE', color: 'bg-blue-500', theme: 'The Stability Anchor' },
+            { id: 'yellow', name: '$YELLOW', color: 'bg-yellow-500', theme: 'The Culture Leader' },
+        ];
+
+        // Data for Meme Coin candidates
+        const memeCandidates = [
+            { id: 'chromi', name: '$CHROMI', color: 'bg-green-500', theme: 'The Vibrant Vision' },
+            { id: 'primson', name: '$PRIMSON', color: 'bg-pink-500', theme: 'The Digital Pioneer' },
+            { id: 'splatt', name: '$SPLATT', color: 'bg-indigo-500', theme: 'The Artful Asset' },
+            { id: 'catmos', name: '$CATMOS', color: 'bg-orange-500', theme: 'The Community Cat' },
+        ];
+
+        // UI elements
+        const walletButtonContainer = document.getElementById('walletButtonContainer');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const walletAddressDisplay = document.getElementById('walletAddressDisplay');
+        const authStatus = document.getElementById('authStatus');
+        const voteMessage = document.getElementById('voteMessage');
+
+        // --- FIREBASE INITIALIZATION AND AUTHENTICATION ---
+        const initializeFirebase = async () => {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                authStatus.textContent = 'Awaiting authentication...';
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        // MANDATORY: Display the full user ID for traceability in multi-user apps.
+                        authStatus.textContent = `User ID: ${userId} (Authenticated)`;
+                        // Start listening for DApp state data after successful auth
+                        listenToDAppState();
+                    } else {
+                        // Attempt to sign in using the provided custom token or anonymously
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(auth, initialAuthToken);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        } catch (error) {
+                            console.error("Firebase Auth Error:", error);
+                            authStatus.textContent = `Authentication failed: ${error.message}`;
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase Initialization Error:", error);
+                authStatus.textContent = `Firebase init error. Check config.`;
+            }
+        };
+
+        // --- FIRESTORE DATA HANDLING (DAPP STATE) ---
+        const getPrivateDocRef = (docName) => {
+            if (!userId) {
+                console.error("Cannot get document ref: User ID is missing.");
+                return null;
+            }
+            // Mandatory private data path: /artifacts/{appId}/users/{userId}/dapp_state/{docName}
+            return doc(db, 
+                `artifacts/${appId}/users/${userId}/dapp_state`, 
+                docName
+            );
+        };
+
+        // Listen for changes to the user's DApp state (including wallet address)
+        const listenToDAppState = () => {
+            const walletDocRef = getPrivateDocRef('user_wallet');
+            if (!walletDocRef) return;
+
+            onSnapshot(walletDocRef, (docSnap) => {
+                if (docSnap.exists() && docSnap.data().connectedWallet) {
+                    const { address, network } = docSnap.data().connectedWallet;
+                    updateUI(address, network);
+                } else {
+                    updateUI(null, null);
+                }
+            }, (error) => {
+                console.error("Firestore listen error:", error);
+                updateUI(null, null);
+            });
+        };
+
+        // --- WALLET CONNECTIVITY SIMULATION ---
+
+        const generateAddress = (chain) => {
+            if (chain === 'solana') {
+                // Generates a convincing 44-character Solana public key
+                return '7y' + [...Array(42)].map(() => Math.random().toString(36)[2]).join('');
+            } else if (chain === 'bsc') {
+                // Generates a convincing 42-character EVM address (0x...)
+                return '0x' + [...Array(40)].map(() => Math.random().toString(16)[2]).join('');
+            }
+            return null;
+        };
+
+        const saveWalletAddress = async (address, network) => {
+            try {
+                const walletDocRef = getPrivateDocRef('user_wallet');
+                if (!walletDocRef) return;
+
+                if (address && network) {
+                    await setDoc(walletDocRef, { 
+                        connectedWallet: {
+                            address: address, 
+                            network: network, 
+                            connectedAt: new Date().toISOString()
+                        }
+                    });
+                    console.log(`Wallet connected (${network}) and saved.`);
+                } else {
+                    // Clear the address by setting the connectedWallet to null
+                    await setDoc(walletDocRef, { connectedWallet: null });
+                    console.log("Wallet disconnected and cleared.");
+                }
+
+            } catch (error) {
+                console.error("Error saving wallet state to Firestore:", error);
+            }
+        };
+        
+        // Main function to connect a wallet
+        window.connectWallet = async (chain) => {
+            if (!userId) {
+                voteMessage.textContent = "Please wait for authentication to complete.";
+                voteMessage.classList.remove('hidden');
+                setTimeout(() => voteMessage.classList.add('hidden'), 3000);
+                return;
+            }
+
+            // In a real DApp, this would be the function that calls the Solana or EVM wallet adapter.
+            const newAddress = generateAddress(chain); 
+            await saveWalletAddress(newAddress, chain);
+        };
+
+        // Main function to disconnect
+        window.disconnectWallet = async () => {
+             if (!userId) { return; }
+             await saveWalletAddress(null, null);
+        };
+
+        // --- TAB SWITCHING ---
+        window.showTab = (tabName) => {
+            // Update active tab state
+            currentTab = tabName;
+            
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Show selected tab content
+            document.getElementById(`${tabName}VotingSection`).classList.remove('hidden');
+
+            // Update tab button styles
+            const tabColors = document.getElementById('tabColors');
+            const tabMemes = document.getElementById('tabMemes');
+
+            // Reset styles
+            [tabColors, tabMemes].forEach(tab => {
+                tab.classList.remove('border-purple-500', 'bg-gray-800/50', 'text-purple-400');
+                tab.classList.add('border-transparent', 'text-gray-400', 'hover:text-gray-200', 'hover:border-gray-600');
+            });
+            
+            // Set active style
+            const activeTabElement = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+            activeTabElement.classList.add('border-purple-500', 'text-purple-400', 'bg-gray-800/50');
+            activeTabElement.classList.remove('border-transparent', 'text-gray-400', 'hover:text-gray-200', 'hover:border-gray-600');
+
+            // Re-render candidates for the newly active tab if connected
+            const isConnected = !walletAddressDisplay.textContent.includes('Disconnected');
+            const currentAddress = isConnected ? walletAddressDisplay.textContent : null;
+            updateUI(currentAddress, null); // Call updateUI to trigger re-rendering of the active tab
+
+            // Clear vote message when switching tabs
+            voteMessage.classList.add('hidden');
+        }
+
+        // --- VOTING MECHANISM ---
+        window.handleVote = (candidateId) => {
+            const currentText = walletAddressDisplay.textContent;
+            if (currentText.includes('Disconnected')) {
+                voteMessage.textContent = "Error: Please connect a wallet (Solana or BSC) to cast your vote.";
+                voteMessage.classList.remove('hidden', 'text-green-500');
+                voteMessage.classList.add('text-red-500');
+                return;
+            }
+
+            // In a real DApp, this would trigger a transaction/signature request
+            console.log(`Vote cast for: ${candidateId} using wallet: ${currentText}`);
+            
+            // Success message
+            voteMessage.textContent = `Vote successfully cast for ${candidateId}!`;
+            voteMessage.classList.remove('hidden', 'text-red-500');
+            voteMessage.classList.add('text-green-500');
+
+            // Visually highlight the selected card
+            document.querySelectorAll('.candidate-card').forEach(card => {
+                card.classList.remove('ring-4', 'ring-purple-500', 'shadow-2xl');
+            });
+            document.getElementById(`card-${candidateId}`).classList.add('ring-4', 'ring-purple-500', 'shadow-2xl');
+
+            setTimeout(() => voteMessage.classList.add('hidden'), 5000);
+        };
+
+        // --- UI RENDERING ---
+
+        const renderCandidates = (candidates, containerId, currentAddress) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = ''; // Clear loading message
+
+            const isConnected = !!currentAddress;
+
+            candidates.forEach(candidate => {
+                // Determine the correct grid class based on the container (3 for colors, 4 for memes)
+                const containerClass = containerId === 'colorCandidateContainer' ? 'md:col-span-1' : 'md:col-span-1';
+                
+                // Get the first letter of the coin name (after the $) for the initial box
+                const initialLetter = candidate.name.substring(1).slice(0, 1);
+
+                const cardHtml = `
+                    <div id="card-${candidate.id}" class="candidate-card p-6 bg-gray-700 rounded-xl transition duration-300 transform hover:scale-[1.02] cursor-pointer border border-gray-600/50 ${containerClass}" 
+                         onclick="${isConnected ? `handleVote('${candidate.id}')` : 'null'}">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="w-8 h-8 ${candidate.color} rounded-full flex items-center justify-center text-gray-900 font-bold text-sm shadow-md">
+                                <span class="text-xs font-mono">${initialLetter}</span>
+                            </div>
+                            <h3 class="text-xl font-bold">${candidate.name}</h3>
+                        </div>
+                        <p class="text-gray-400 mb-4">${candidate.theme}</p>
+                        
+                        <!-- Stats -->
+                        <div class="space-y-1 text-sm">
+                            <p class="flex justify-between"><span>Total Votes:</span> <span class="font-mono text-cyan-400">${(Math.random() * 50 + 10).toFixed(0)}M $COC</span></p>
+                            <p class="flex justify-between"><span>Current Rank:</span> <span class="font-mono text-purple-400">${Math.floor(Math.random() * candidates.length) + 1}</span></p>
+                        </div>
+
+                        <button class="w-full mt-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200
+                            ${isConnected 
+                                ? 'bg-purple-600 hover:bg-purple-700 text-white' 
+                                : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                            }">
+                            ${isConnected ? 'Cast Vote (Requires $COC$ Balance)' : 'Connect Wallet to Vote'}
+                        </button>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        };
+
+        const updateUI = (address, network) => {
+            walletButtonContainer.innerHTML = ''; // Clear buttons first
+
+            if (address && network) {
+                // Connected state
+                const displayPrefix = network.toUpperCase() === 'SOLANA' ? '[SOL]' : '[BSC]';
+                let shortAddress;
+                if (network === 'solana') {
+                    shortAddress = `${address.substring(0, 6)}...${address.substring(38)}`;
+                } else { // bsc/evm
+                    shortAddress = `${address.substring(0, 6)}...${address.substring(38)}`;
+                }
+                
+                connectionStatus.classList.remove('bg-red-500');
+                connectionStatus.classList.add('bg-green-500');
+                walletAddressDisplay.textContent = `${displayPrefix} Wallet: ${shortAddress}`;
+                
+                walletButtonContainer.innerHTML = `
+                    <button onclick="disconnectWallet()" class="w-full sm:w-auto px-6 py-2 rounded-full font-semibold transition duration-300 transform shadow-lg
+                        bg-gray-700 hover:bg-gray-600 text-white">
+                        Disconnect ${displayPrefix} Wallet
+                    </button>
+                `;
+
+            } else {
+                // Disconnected state
+                connectionStatus.classList.remove('bg-green-500');
+                connectionStatus.classList.add('bg-red-500');
+                walletAddressDisplay.textContent = 'Wallet Disconnected';
+                
+                walletButtonContainer.innerHTML = `
+                    <button onclick="connectWallet('solana')" class="w-full sm:w-auto px-6 py-2 rounded-full font-semibold transition duration-300 transform shadow-lg
+                        bg-gradient-to-r from-cyan-500 to-cyan-700 hover:from-cyan-600 hover:to-cyan-800 text-gray-900">
+                        Connect SOL Wallet
+                    </button>
+                    <button onclick="connectWallet('bsc')" class="w-full sm:w-auto px-6 py-2 rounded-full font-semibold transition duration-300 transform shadow-lg
+                        bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-gray-900">
+                        Connect BSC/EVM Wallet
+                    </button>
+                `;
+            }
+            
+            // Render the candidates for the currently active tab
+            if (currentTab === 'colors') {
+                renderCandidates(colorCandidates, 'colorCandidateContainer', address);
+            } else {
+                renderCandidates(memeCandidates, 'memeCandidateContainer', address);
+            }
+        };
+
+        // --- START APPLICATION ---
+        initializeFirebase();
+        showTab(currentTab); // Ensure the default tab is active on load
+    </script>
+</body>
+</html>
