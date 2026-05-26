@@ -1,250 +1,1005 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="opp (1).png">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paint The Chain - The Decentralized Spectrum</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paint The Chain — The Decentralized Spectrum</title>
+  <meta name="description" content="Paint The Chain: A decentralized governance ecosystem powered by $COC, Color Coins, and deflationary burns. Play. Vote. Burn. Repeat.">
+  <link rel="icon" type="image/png" href="opp (1).png">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Meta Description for SEO -->
-    <meta name="description" content="Paint The Chain: A decentralized governance ecosystem powered by $COC, Color Coins, and deflationary burns. Play. Vote. Burn. Repeat.">
+  <style>
+    :root {
+      --ink: #0a0a08;
+      --paper: #f5f2ec;
+      --accent-r: #e63323;
+      --accent-g: #1db954;
+      --accent-b: #1a6cff;
+      --accent-y: #f5c800;
+      --accent-p: #9b3dff;
+      --spectrum: linear-gradient(90deg, #e63323, #f5c800, #1db954, #1a6cff, #9b3dff);
+      --mono: 'DM Mono', monospace;
+    }
 
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-  
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <style>
-        /* Custom styles for the vibrant, modern aesthetic */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f4f7; /* Very light, clean background */
-            color: #1f2937; /* Dark text for high contrast */
-        }
-        .vibrant-bg {
-            /* Rainbow gradient for the signature look */
-            background: linear-gradient(135deg, #FF5733, #FFC300, #33FF57, #334EFF, #9933FF);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: #FF5733; /* fallback solid color */
-        }
-        .section-separator {
-            height: 2px;
-            background: linear-gradient(90deg, #FF5733, #334EFF);
-            width: 100px;
-            margin: 0 auto;
-        }
-        .card-glow {
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-        .card-glow:hover {
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-            transform: translateY(-4px);
-        }
-        .cta-button {
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px 0 rgba(255, 165, 0, 0.4);
-        }
-        .cta-button:hover {
-            box-shadow: 0 6px 20px 0 rgba(255, 165, 0, 0.6);
-            transform: translateY(-2px);
-        }
-    </style>
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE GRAIN OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.5;
+    }
+
+    /* ── SPECTRUM STRIPE ── */
+    .spectrum-stripe {
+      height: 5px;
+      background: var(--spectrum);
+      position: relative;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--ink);
+      color: var(--paper);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+      height: 60px;
+      border-bottom: 1px solid rgba(245,242,236,0.08);
+    }
+
+    .nav-brand {
+      display: flex; align-items: center; gap: 14px;
+      text-decoration: none; color: inherit;
+    }
+
+    .nav-logo {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--spectrum);
+      flex-shrink: 0;
+    }
+
+    .nav-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      color: var(--paper);
+    }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 32px;
+    }
+
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(245,242,236,0.5);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--paper); }
+
+    .nav-cta {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--accent-y);
+      color: var(--ink);
+      border: none;
+      padding: 9px 22px;
+      cursor: pointer;
+      text-decoration: none;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+      transition: background 0.2s;
+    }
+
+    .nav-cta:hover { background: #ffd929; }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 80px 40px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-y);
+      margin-bottom: 28px;
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 32px; height: 1px;
+      background: var(--accent-y);
+    }
+
+    .hero-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(96px, 14vw, 180px);
+      line-height: 0.88;
+      letter-spacing: -0.01em;
+      margin-bottom: 0;
+    }
+
+    .hero-headline .line-spectrum {
+      background: var(--spectrum);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin-top: 60px;
+      border-top: 1px solid rgba(245,242,236,0.1);
+    }
+
+    .hero-desc {
+      padding: 40px 40px 40px 0;
+      border-right: 1px solid rgba(245,242,236,0.1);
+    }
+
+    .hero-desc p {
+      font-size: 17px;
+      line-height: 1.75;
+      color: rgba(245,242,236,0.7);
+      max-width: 380px;
+      margin-bottom: 36px;
+    }
+
+    .hero-actions {
+      display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: var(--accent-y);
+      color: var(--ink);
+      border: none;
+      padding: 14px 32px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-primary:hover { background: #ffd929; transform: translateY(-1px); }
+
+    .btn-ghost {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(245,242,236,0.5);
+      text-decoration: none;
+      border: 1px solid rgba(245,242,236,0.15);
+      padding: 14px 28px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .btn-ghost:hover { color: var(--paper); border-color: rgba(245,242,236,0.4); }
+
+    .hero-stats {
+      padding: 40px 0 40px 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1px;
+      background: rgba(245,242,236,0.08);
+    }
+
+    .hero-stat {
+      padding: 28px 24px;
+      background: var(--ink);
+    }
+
+    .hero-stat-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .hero-stat-val.r { color: var(--accent-r); }
+    .hero-stat-val.g { color: var(--accent-g); }
+    .hero-stat-val.b { color: var(--accent-b); }
+    .hero-stat-val.y { color: var(--accent-y); }
+
+    .hero-stat-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(245,242,236,0.35);
+    }
+
+    /* ── COLOR TICKER ── */
+    .ticker-wrap {
+      background: var(--ink);
+      border-top: 1px solid rgba(245,242,236,0.08);
+      overflow: hidden;
+      padding: 14px 0;
+    }
+
+    .ticker-track {
+      display: flex; gap: 64px;
+      width: max-content;
+      animation: ticker 22s linear infinite;
+    }
+
+    .ticker-track:hover { animation-play-state: paused; }
+
+    .ticker-item {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      color: rgba(245,242,236,0.4);
+      display: flex; align-items: center; gap: 10px;
+      white-space: nowrap;
+    }
+
+    .ticker-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── SECTION SHARED ── */
+    .section {
+      padding: 100px 40px;
+    }
+
+    .section-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(10,10,8,0.35);
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .section-tag::before {
+      content: '';
+      display: inline-block;
+      width: 20px; height: 1px;
+      background: currentColor;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 6vw, 80px);
+      letter-spacing: 0.01em;
+      line-height: 0.95;
+      margin-bottom: 64px;
+    }
+
+    /* ── MECHANISM SECTION ── */
+    .mechanism {
+      background: var(--paper);
+    }
+
+    .flow-layout {
+      display: grid;
+      grid-template-columns: 1fr 120px 1fr;
+      gap: 0;
+      align-items: stretch;
+      border: 1px solid rgba(10,10,8,0.1);
+    }
+
+    .flow-panel {
+      padding: 48px 40px;
+    }
+
+    .flow-panel + .flow-panel {
+      border-left: 1px solid rgba(10,10,8,0.1);
+    }
+
+    .flow-panel-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(10,10,8,0.3);
+      margin-bottom: 20px;
+    }
+
+    .flow-panel-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      line-height: 1.25;
+      margin-bottom: 14px;
+    }
+
+    .flow-panel-desc {
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(10,10,8,0.6);
+      margin-bottom: 28px;
+    }
+
+    .color-swatches {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+
+    .swatch {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(10,10,8,0.5);
+    }
+
+    .swatch-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+    }
+
+    .flow-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 0;
+      border-left: 1px solid rgba(10,10,8,0.1);
+      border-right: 1px solid rgba(10,10,8,0.1);
+      background: var(--ink);
+    }
+
+    .coc-orb {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: var(--spectrum);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .coc-orb::after {
+      content: '$COC';
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+    }
+
+    .flow-center-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(245,242,236,0.3);
+    }
+
+    .flow-vote-types {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .vote-pill {
+      display: inline-flex;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      padding: 6px 14px;
+      border: 1px solid;
+      align-self: flex-start;
+    }
+
+    .vote-pill.blue { border-color: var(--accent-b); color: var(--accent-b); }
+    .vote-pill.green { border-color: var(--accent-g); color: var(--accent-g); }
+
+    /* ── BURN BANNER ── */
+    .burn-banner {
+      margin-top: 60px;
+      padding: 48px 40px;
+      background: var(--ink);
+      color: var(--paper);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .burn-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.04em;
+      color: var(--accent-y);
+      margin-bottom: 10px;
+    }
+
+    .burn-desc {
+      font-size: 15px;
+      line-height: 1.75;
+      color: rgba(245,242,236,0.6);
+      max-width: 520px;
+    }
+
+    .burn-word {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 120px;
+      line-height: 0.85;
+      letter-spacing: -0.02em;
+      background: var(--spectrum);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      white-space: nowrap;
+    }
+
+    /* ── TOKENOMICS ── */
+    .tokenomics {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .tokenomics .section-tag { color: rgba(245,242,236,0.25); }
+    .tokenomics .section-title { color: var(--paper); }
+
+    .tknomics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(245,242,236,0.08);
+    }
+
+    .tcard {
+      background: var(--ink);
+      padding: 44px 40px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s;
+    }
+
+    .tcard:hover { background: #111110; }
+
+    .tcard-accent-line {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .tcard-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 72px;
+      line-height: 1;
+      opacity: 0.06;
+      position: absolute;
+      right: 28px; bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .tcard-kicker {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(245,242,236,0.3);
+      margin-bottom: 14px;
+    }
+
+    .tcard-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      line-height: 1.2;
+      color: var(--paper);
+      margin-bottom: 14px;
+    }
+
+    .tcard-desc {
+      font-size: 14px;
+      line-height: 1.75;
+      color: rgba(245,242,236,0.5);
+    }
+
+    /* ── UTILITY ── */
+    .utility {
+      background: var(--paper);
+    }
+
+    .utility-list {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(10,10,8,0.1);
+    }
+
+    .utility-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr;
+      border-bottom: 1px solid rgba(10,10,8,0.08);
+      transition: background 0.2s;
+    }
+
+    .utility-row:last-child { border-bottom: none; }
+    .utility-row:hover { background: rgba(10,10,8,0.02); }
+
+    .utility-num {
+      padding: 40px 0 40px 32px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 40px;
+      color: rgba(10,10,8,0.12);
+      display: flex; align-items: flex-start;
+    }
+
+    .utility-left {
+      padding: 40px 32px;
+      border-left: 1px solid rgba(10,10,8,0.08);
+    }
+
+    .utility-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .utility-right {
+      padding: 40px 32px;
+      border-left: 1px solid rgba(10,10,8,0.08);
+      font-size: 15px;
+      line-height: 1.75;
+      color: rgba(10,10,8,0.55);
+      display: flex; align-items: flex-start;
+    }
+
+    .utility-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid;
+      margin-bottom: 12px;
+    }
+
+    /* ── ROADMAP ── */
+    .roadmap {
+      background: var(--paper);
+      border-top: 1px solid rgba(10,10,8,0.08);
+      padding: 100px 40px;
+    }
+
+    .roadmap-track {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border: 1px solid rgba(10,10,8,0.1);
+      margin-top: 0;
+    }
+
+    .roadmap-phase {
+      padding: 40px 32px;
+      border-right: 1px solid rgba(10,10,8,0.08);
+      position: relative;
+    }
+
+    .roadmap-phase:last-child { border-right: none; }
+
+    .roadmap-phase.active {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .roadmap-phase-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .roadmap-phase:not(.active) .roadmap-phase-tag { color: rgba(10,10,8,0.3); }
+    .roadmap-phase.active .roadmap-phase-tag { color: var(--accent-y); }
+
+    .roadmap-phase-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.03em;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .roadmap-items {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+
+    .roadmap-item {
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.5;
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+
+    .roadmap-phase:not(.active) .roadmap-item { color: rgba(10,10,8,0.5); }
+    .roadmap-phase.active .roadmap-item { color: rgba(245,242,236,0.65); }
+
+    .roadmap-item::before {
+      content: '→';
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .roadmap-phase:not(.active) .roadmap-item::before { color: rgba(10,10,8,0.2); }
+    .roadmap-phase.active .roadmap-item::before { color: var(--accent-y); }
+
+    .active-badge {
+      position: absolute;
+      top: 16px; right: 16px;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--accent-y);
+      color: var(--ink);
+      padding: 4px 10px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 48px 40px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: center;
+      border-top: 1px solid rgba(245,242,236,0.06);
+    }
+
+    .footer-left p {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: rgba(245,242,236,0.35);
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .footer-tagline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.04em;
+      color: rgba(245,242,236,0.2);
+    }
+
+    .footer-links {
+      display: flex; gap: 28px;
+    }
+
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(245,242,236,0.35);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--paper); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+    }
+
+    .fade-up:nth-child(1) { animation-delay: 0.05s; }
+    .fade-up:nth-child(2) { animation-delay: 0.15s; }
+    .fade-up:nth-child(3) { animation-delay: 0.25s; }
+    .fade-up:nth-child(4) { animation-delay: 0.35s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links a { display: none; }
+      .hero { padding: 60px 20px 0; }
+      .hero-bottom { grid-template-columns: 1fr; }
+      .hero-desc { padding: 32px 0; border-right: none; border-bottom: 1px solid rgba(245,242,236,0.1); }
+      .hero-stats { padding: 32px 0 0; }
+      .section { padding: 64px 20px; }
+      .flow-layout { grid-template-columns: 1fr; }
+      .flow-center { flex-direction: row; padding: 24px 32px; }
+      .flow-panel + .flow-panel { border-left: none; border-top: 1px solid rgba(10,10,8,0.1); }
+      .burn-banner { grid-template-columns: 1fr; }
+      .burn-word { font-size: 72px; }
+      .tknomics-grid { grid-template-columns: 1fr; }
+      .utility-row { grid-template-columns: 60px 1fr; }
+      .utility-right { display: none; }
+      .roadmap-track { grid-template-columns: 1fr 1fr; }
+      .roadmap-phase { border-bottom: 1px solid rgba(10,10,8,0.08); }
+      footer { grid-template-columns: 1fr; }
+      .footer-links { flex-wrap: wrap; gap: 16px; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="bg-white p-4 sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-    <!-- Logo -->
-    <img src="https://drive.google.com/thumbnail?id=1aixsikOlA5XsOdbdZCQYcSmfpCTxkVto&sz=w500" alt="COC Logo" class="w-10 h-10">
-    <!-- Title: Adjusted for mobile (text-2xl) to prevent overflow -->
-    <h1 class="text-2xl sm:text-3xl font-extrabold vibrant-bg">Paint The Chain</h1>
-</div>
 
-                <!-- Navigation Links & CTA: Links hidden on mobile (<md) to fix overflow -->
-                <div class="flex items-center md:space-x-6 text-sm font-semibold">
-                    <!-- Links hidden on small screens -->
-                    <a href="#mechanism" class="hidden md:block text-gray-600 hover:text-blue-600 transition duration-300">Mechanism</a>
-                    <a href="#tokens" class="hidden md:block text-gray-600 hover:text-blue-600 transition duration-300">Tokenomics</a>
-                    <a href="#utility" class="hidden md:block text-gray-600 hover:text-blue-600 transition duration-300">Utility</a>
-                    
-                    <!-- CTA button remains visible -->
-                    <a href="dapp.html" class="px-4 py-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition cta-button">
-                        Launch DApp
-                    </a>
-                </div>
-            </div>
+  <div class="spectrum-stripe"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-brand" href="#">
+      <div class="nav-logo"></div>
+      <span class="nav-name">Paint The Chain</span>
+    </a>
+    <div class="nav-links">
+      <a href="#mechanism">Mechanism</a>
+      <a href="#tokens">Tokenomics</a>
+      <a href="#utility">Utility</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="dapp.html" class="nav-cta">Launch DApp</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-eyebrow fade-up">Utility-first · Solana + BSC · Decentralized spectrum</div>
+    <h1 class="hero-headline">
+      <span class="fade-up" style="display:block;">PLAY.</span>
+      <span class="fade-up line-spectrum" style="display:block;">VOTE.</span>
+      <span class="fade-up" style="display:block;">BURN.</span>
+    </h1>
+
+    <div class="hero-bottom">
+      <div class="hero-desc fade-up">
+        <p>$COC is the governance fuel powering the decentralized spectrum. Direct weekly creator rewards, launch new Color Coins, and reinforce permanent deflationary scarcity — all on-chain.</p>
+        <div class="hero-actions">
+          <a href="dapp.html" class="btn-primary">Connect & Vote Now</a>
+          <a href="https://paint-the-chain-coin-of-colors-d.gitbook.io/paint-the-chain-coin-of-colors-dao-docs/wXFS4C6M906oNWudBnvv/" target="_blank" class="btn-ghost">Read Docs</a>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <header class="py-24 md:py-32 text-center">
-        <div class="max-w-4xl mx-auto px-4">
-            <!-- Ecosystem -->
-            <p class="text-lg font-medium text-gray-500 mb-2 uppercase tracking-widest">
-                Utility-First Ecosystem
-            </p>
-            <h1 class="text-5xl md:text-7xl font-black mb-6 leading-none">
-                <span class="vibrant-bg">Play. Vote. Burn. Repeat.</span>
-            </h1>
-            <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-                $COC is the fuel for the decentralized spectrum. Vote on Weekly Creator Rewards, steer new token launches, and reinforce deflationary scarcity.
-            </p>
-            <!-- Call to Action Button LINK FIX: Direct to dapp.html -->
-            <a href="dapp.html" class="cta-button inline-block bg-yellow-500 text-white font-bold py-3 px-10 rounded-full text-lg shadow-lg hover:bg-yellow-600">
-                Connect Wallet & Vote Now
-            </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-val r">$RED</div>
+          <div class="hero-stat-label">Energy Core</div>
         </div>
-    </header>
-
-    <!-- Decentralized Flow Section (formerly Governance Flow) -->
-    <section id="mechanism" class="py-16 md:py-24 bg-white">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-4xl font-bold text-center mb-4">The Decentralized Flow</h2>
-            <div class="section-separator mb-16"></div>
-
-            <div class="grid grid-cols-1 md:grid-cols-5 items-center gap-8 text-center">
-                <!-- 1. Color Coins -->
-                <div class="md:col-span-2">
-                    <h3 class="text-2xl font-bold mb-3">Color Coins</h3>
-                    <p class="text-gray-500 mb-4">The competitive pool. Each coin is a candidate for the Weekly rewards.</p>
-                    <div class="flex justify-center space-x-3">
-                        <!-- Updated visual to R, G, B only -->
-                        <span class="w-8 h-8 rounded-full bg-red-500 shadow-md"></span>
-                        <span class="w-8 h-8 rounded-full bg-green-500 shadow-md"></span>
-                        <span class="w-8 h-8 rounded-full bg-blue-500 shadow-md"></span>
-                    </div>
-                </div>
-
-                <!-- 2. COC Token (The Engine) -->
-                <div class="md:col-span-1">
-                    <div class="w-24 h-24 mx-auto flex items-center justify-center rounded-full bg-yellow-500 text-white text-xl font-bold shadow-xl">
-                        $COC
-                    </div>
-                    <p class="text-sm mt-3 font-semibold">Utility Token</p>
-                </div>
-
-                <!-- 3. Community Control (formerly Governance) -->
-                <div class="md:col-span-2">
-                    <h3 class="text-2xl font-bold mb-3">Community Control</h3>
-                    <p class="text-gray-500">Hold $COC to vote on Weekly Creator Reward allocations and launch new Color Coins.</p>
-                    <div class="mt-4 flex justify-center space-x-4">
-                        <span class="text-sm font-semibold text-blue-600">Weekly Reward Votes</span>
-                        <span class="text-sm font-semibold text-green-600">Launch Votes (As Needed)</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Buyback Mechanism Feature (UPDATED CONTENT) -->
-            <div id="scarcity" class="mt-20 flex flex-col md:flex-row items-center justify-between p-8 bg-yellow-500/10 rounded-xl border border-yellow-500/30">
-                <div class="text-left">
-                    <h3 class="text-2xl font-black text-yellow-700 mb-2">Buyback & Burn Strategy</h3>
-                    <p class="text-gray-600">
-                        All buyback activity is split to reinforce long-term stability: Taxes are set so $COC is Permanently Burned, locked as permanent liquidity, and to cover self-sustaining operations. Please **refer** to the docs.
-                    </p>
-                </div>
-                <div class="text-5xl font-extrabold text-yellow-600 mt-4 md:mt-0 md:ml-8">
-                    <span class="vibrant-bg">BURN</span>
-                </div>
-            </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val g">$GREEN</div>
+          <div class="hero-stat-label">Growth Node</div>
         </div>
-    </section>
-    
-    <!-- Tokenomics Snapshot Section -->
-    <section id="tokens" class="py-16 md:py-24 px-4 bg-gray-50">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-4">Core Tokenomics & Transparency</h2>
-            <div class="section-separator mb-16"></div>
-
-            <!-- Adjusted to a 2-column grid for the 4 remaining cards -->
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Card 1: Weekly Volume Rewards (UPDATED CONTENT) -->
-                <div class="bg-white p-6 rounded-2xl card-glow border-t-4 border-purple-500">
-                    <p class="text-xs text-gray-500 mb-1 font-bold uppercase">Reward Cycle</p>
-                    <h3 class="text-xl font-black mb-2 vibrant-bg">WEEKLY ALLOCATIONS</h3>
-                    <p class="text-gray-500 text-sm">
-                        $COC$ holders designate the winning Color Coin every week to receive the Community-Directed Rewards.
-                    </p>
-                </div>
-                
-                <!-- Card 2: Multi-Layer Deflationary Burns (MERGED - Content retained) -->
-                <div class="bg-white p-6 rounded-2xl card-glow border-t-4 border-red-500">
-                    <p class="text-xs text-gray-500 mb-1 font-bold uppercase">Deflationary Engine</p>
-                    <h3 class="text-xl font-black mb-2 vibrant-bg">Multi-Layer Deflationary Burns</h3>
-                    <p class="text-gray-500 text-sm">
-                        All ecosystem activity drives deflation. $COC transactions include a small permanent burn tax, while individual Color Coins implement unique, variable burn taxes on buys and sells to control their own supply and contribute to overall scarcity.
-                    </p>
-                </div>
-                
-                <!-- Card 3: The Spectrum Launch (Kept) -->
-                <div class="bg-white p-6 rounded-2xl card-glow border-t-4 border-lime-500">
-                    <p class="text-xs text-gray-500 mb-1 font-bold uppercase">New Frontier</p>
-                    <h3 class="text-xl font-black mb-2 vibrant-bg">The Spectrum Launch</h3>
-                    <p class="text-gray-500 text-sm">
-                        The foundational On-Chain Color Library, launching in Phase 3. This permanent, governed color registry will serve as the verifiable palette for future NFT mints and community art projects.
-                    </p>
-                </div>
-
-                <!-- Card 4: Utility Gate (Kept) -->
-                <div class="bg-white p-6 rounded-2xl card-glow border-t-4 border-blue-500">
-                    <p class="text-xs text-gray-500 mb-1 font-bold uppercase">Utility Gate</p>
-                    <h3 class="text-xl font-black mb-2 vibrant-bg">Exclusive DApp Access</h3>
-                    <p class="text-gray-500 text-sm">
-                        A minimum $COC holding will be required to unlock access to the creative Pixel Palette DApp, allowing verified holders to participate in Phase 4 art generation.
-                    </p>
-                </div>
-            </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val b">$BLUE</div>
+          <div class="hero-stat-label">Stability Anchor</div>
         </div>
-    </section>
+      </div>
+    </div>
+  </header>
 
-    <!-- Utility & Creative Frontier Section -->
-    <section id="utility" class="py-16 md:py-24 px-4">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-4">Core Utility Functions</h2>
-            <div class="section-separator mb-16"></div>
+  <!-- TICKER -->
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent-r);"></span>$RED · Energy Core</span>
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent-g);"></span>$GREEN · Growth Node</span>
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent-b);"></span>$BLUE · Stability Anchor</span>
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent-p);"></span>$COC · Governance Token</span>
+      <span class="ticker-item" style="color:rgba(245,242,236,0.2);">— PLAY. VOTE. BURN. REPEAT —</span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent-r);"></span>$RED · Energy Core</span>
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent-g);"></span>$GREEN · Growth Node</span>
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent-b);"></span>$BLUE · Stability Anchor</span>
+      <span class="ticker-item"><span class="ticker-dot" style="background:var(--accent-p);"></span>$COC · Governance Token</span>
+      <span class="ticker-item" style="color:rgba(245,242,236,0.2);">— PLAY. VOTE. BURN. REPEAT —</span>
+    </div>
+  </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Card 1: Steering Incentives -->
-                <div class="bg-white p-6 rounded-2xl card-glow border-t-4 border-blue-500">
-                    <h3 class="text-xl font-bold mb-2">1. Steering Incentives</h3>
-                    <p class="text-gray-500">
-                        Use your $COC to select the winning Color Coin that receives the Creator Rewards pool, steering the project's financial incentives every week.
-                    </p>
-                </div>
-                <!-- Card 2: New Spectrum Integration -->
-                <div class="bg-white p-6 rounded-2xl card-glow border-t-4 border-green-500">
-                    <h3 class="text-xl font-bold mb-2">2. Spectrum Expansion</h3>
-                    <p class="text-gray-500">
-                        Govern the introduction of new Color Coins on Pump.fun, deciding when and how the ecosystem expands its community base.
-                    </p>
-                </div>
-                <!-- Card 3: Creative Access -->
-                <div class="bg-white p-6 rounded-2xl card-glow border-t-4 border-red-500">
-                    <h3 class="text-xl font-bold mb-2">3. Creative Access</h3>
-                    <p class="text-gray-500">
-                        $COC is the key to the Pixel Palette DApp, allowing verified holders to create, influence, and eventually mint the official Color Coin NFT collection.
-                    </p>
-                </div>
-            </div>
+  <!-- MECHANISM -->
+  <section id="mechanism" class="section mechanism">
+    <div class="section-tag">Mechanism</div>
+    <div class="section-title">The Decentralized<br>Flow</div>
+
+    <div class="flow-layout">
+      <div class="flow-panel">
+        <div class="flow-panel-tag">Input layer</div>
+        <h3 class="flow-panel-title">Color Coins</h3>
+        <p class="flow-panel-desc">Each Color Coin is a candidate in the weekly community reward competition. Hold, trade, and rally your color community to the top.</p>
+        <div class="color-swatches">
+          <div class="swatch"><div class="swatch-dot" style="background:var(--accent-r);"></div>$RED</div>
+          <div class="swatch"><div class="swatch-dot" style="background:var(--accent-g);"></div>$GREEN</div>
+          <div class="swatch"><div class="swatch-dot" style="background:var(--accent-b);"></div>$BLUE</div>
         </div>
-    </section>
+      </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 py-8">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-gray-500 mb-4 font-semibold">Play. Paint. Vote. Burn. Repeat.</p>
-            <div class="flex justify-center space-x-6">
-                <a href="https://paint-the-chain-coin-of-colors-d.gitbook.io/paint-the-chain-coin-of-colors-dao-docs/wXFS4C6M906oNWudBnvv/" target="_blank" class="text-gray-400 hover:text-blue-500 transition duration-300">Docs</a>
-                <a href="https://x.com/coinofcolors" target="_blank" class="text-gray-400 hover:text-blue-500 transition duration-300">Twitter</a>
-                <a href="https://t.me/coinofcolors" target="_blank" class="text-gray-400 hover:text-blue-500 transition duration-300">Telegram</a>
-            </div>
-            <p class="text-xs mt-4 text-gray-400">Radical Transparency: All transactions are public and verifiable. &copy; 2025 Paint The Chain. All Rights Reserved.</p>
+      <div class="flow-center">
+        <div class="coc-orb"></div>
+        <div class="flow-center-label">Utility<br>Engine</div>
+      </div>
+
+      <div class="flow-panel">
+        <div class="flow-panel-tag">Output layer</div>
+        <h3 class="flow-panel-title">Community Control</h3>
+        <p class="flow-panel-desc">Hold $COC to vote on weekly Creator Reward allocations and govern the launch of new Color Coins on Pump.fun.</p>
+        <div class="flow-vote-types">
+          <span class="vote-pill blue">Weekly Reward Votes</span>
+          <span class="vote-pill green">Spectrum Launch Votes</span>
         </div>
-    </footer>
+      </div>
+    </div>
+
+    <div class="burn-banner">
+      <div>
+        <div class="burn-title">Buyback & Burn Strategy</div>
+        <p class="burn-desc">All ecosystem activity drives permanent deflation. Transaction taxes are split to fund $COC burns, lock liquidity permanently, and cover self-sustaining operations. Every proportion is public and verifiable on-chain.</p>
+      </div>
+      <div class="burn-word" aria-hidden="true">BURN</div>
+    </div>
+  </section>
+
+  <!-- TOKENOMICS -->
+  <section id="tokens" class="section tokenomics">
+    <div class="section-tag">Tokenomics</div>
+    <div class="section-title">Core Design &<br>Transparency</div>
+
+    <div class="tknomics-grid">
+      <div class="tcard">
+        <div class="tcard-accent-line" style="background:var(--accent-p);"></div>
+        <div class="tcard-kicker">Reward cycle</div>
+        <h3 class="tcard-title">Weekly Allocations</h3>
+        <p class="tcard-desc">$COC holders designate the winning Color Coin every week. The winning community receives the full Creator Rewards pool for that epoch.</p>
+        <div class="tcard-number">01</div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-accent-line" style="background:var(--accent-r);"></div>
+        <div class="tcard-kicker">Deflationary engine</div>
+        <h3 class="tcard-title">Multi-Layer Burns</h3>
+        <p class="tcard-desc">$COC carries a permanent burn tax on every transaction. Individual Color Coins implement variable buy/sell burn taxes to control their own supply and contribute to ecosystem scarcity.</p>
+        <div class="tcard-number">02</div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-accent-line" style="background:var(--accent-g);"></div>
+        <div class="tcard-kicker">New frontier · Phase 3</div>
+        <h3 class="tcard-title">The Spectrum Launch</h3>
+        <p class="tcard-desc">A permanent on-chain color library — the verifiable palette for future NFT mints and community art. Governed by $COC holders, built to last forever.</p>
+        <div class="tcard-number">03</div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-accent-line" style="background:var(--accent-b);"></div>
+        <div class="tcard-kicker">Utility gate · Phase 4</div>
+        <h3 class="tcard-title">Exclusive DApp Access</h3>
+        <p class="tcard-desc">A minimum $COC holding unlocks the Pixel Palette DApp — allowing verified holders to create, influence, and eventually mint the official Color Coin NFT collection.</p>
+        <div class="tcard-number">04</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- UTILITY -->
+  <section id="utility" class="section utility">
+    <div class="section-tag">Utility</div>
+    <div class="section-title">What $COC<br>Actually Does</div>
+
+    <div class="utility-list">
+      <div class="utility-row">
+        <div class="utility-num">01</div>
+        <div class="utility-left">
+          <span class="utility-tag vote-pill blue">Live</span>
+          <div class="utility-name">Steering Incentives</div>
+        </div>
+        <div class="utility-right">
+          Use your $COC to elect the winning Color Coin for weekly Creator Rewards — directing the project's financial incentives and rallying community momentum every epoch.
+        </div>
+      </div>
+      <div class="utility-row">
+        <div class="utility-num">02</div>
+        <div class="utility-left">
+          <span class="utility-tag vote-pill green">Live</span>
+          <div class="utility-name">Spectrum Expansion</div>
+        </div>
+        <div class="utility-right">
+          Govern the introduction of new Color Coins on Pump.fun. $COC holders vote on when and how the spectrum grows, keeping expansion community-led.
+        </div>
+      </div>
+      <div class="utility-row">
+        <div class="utility-num">03</div>
+        <div class="utility-left">
+          <span class="utility-tag" style="border-color:var(--accent-p); color:var(--accent-p);">Phase 4</span>
+          <div class="utility-name">Creative Access</div>
+        </div>
+        <div class="utility-right">
+          $COC is the key to the Pixel Palette DApp. Verified holders create, influence, and mint the official Color Coin NFT collection — turning governance into art.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section id="roadmap" class="roadmap">
+    <div class="section-tag">Roadmap</div>
+    <div class="section-title">The Phases</div>
+    <div class="roadmap-track">
+      <div class="roadmap-phase">
+        <div class="roadmap-phase-tag">Phase 1</div>
+        <div class="roadmap-phase-name">Foundation</div>
+        <ul class="roadmap-items">
+          <li class="roadmap-item">$COC token launch</li>
+          <li class="roadmap-item">Color Coin genesis ($RED, $BLUE, $GREEN, $YELLOW)</li>
+          <li class="roadmap-item">Weekly voting mechanism</li>
+          <li class="roadmap-item">Buyback & burn live</li>
+        </ul>
+      </div>
+      <div class="roadmap-phase active">
+        <div class="active-badge">Current</div>
+        <div class="roadmap-phase-tag">Phase 2</div>
+        <div class="roadmap-phase-name">Meme Expansion</div>
+        <ul class="roadmap-items">
+          <li class="roadmap-item">Meme Coin reward track</li>
+          <li class="roadmap-item">Multi-chain DApp (SOL + BSC)</li>
+          <li class="roadmap-item">Community governance dashboard</li>
+          <li class="roadmap-item">Epoch tracking & analytics</li>
+        </ul>
+      </div>
+      <div class="roadmap-phase">
+        <div class="roadmap-phase-tag">Phase 3</div>
+        <div class="roadmap-phase-name">Spectrum Library</div>
+        <ul class="roadmap-items">
+          <li class="roadmap-item">On-chain color registry launch</li>
+          <li class="roadmap-item">Governed color palette</li>
+          <li class="roadmap-item">NFT infrastructure deployment</li>
+        </ul>
+      </div>
+      <div class="roadmap-phase">
+        <div class="roadmap-phase-tag">Phase 4</div>
+        <div class="roadmap-phase-name">Pixel Palette</div>
+        <ul class="roadmap-items">
+          <li class="roadmap-item">Pixel Palette DApp access gate</li>
+          <li class="roadmap-item">Holder art generation tools</li>
+          <li class="roadmap-item">Official NFT collection mint</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">
+      <p>Radical transparency · All transactions public & verifiable · © 2025 Paint The Chain</p>
+      <div class="footer-tagline">Play. Paint. Vote. Burn. Repeat.</div>
+    </div>
+    <div class="footer-links">
+      <a href="https://paint-the-chain-coin-of-colors-d.gitbook.io/paint-the-chain-coin-of-colors-dao-docs/wXFS4C6M906oNWudBnvv/" target="_blank">Docs</a>
+      <a href="https://x.com/coinofcolors" target="_blank">Twitter</a>
+      <a href="https://t.me/coinofcolors" target="_blank">Telegram</a>
+    </div>
+  </footer>
+
+  <div class="spectrum-stripe"></div>
+
 </body>
 </html>
