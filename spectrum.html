@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Spectrum · Paint The Chain</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0a0a08; --paper: #f5f2ec;
+      --surface: #0f0f0d; --surface2: #161614;
+      --border: rgba(255,255,255,0.07); --border-d: rgba(10,10,8,0.1);
+      --text: #e8e4dc; --muted: rgba(232,228,220,0.38);
+      --accent-y: #f5c800; --accent-g: #1db954;
+      --spectrum: linear-gradient(90deg,#e63323,#f5c800,#1db954,#1a6cff,#9b3dff);
+      --mono: 'DM Mono',monospace; --pad: 16px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--ink);color:var(--text);font-family:'Manrope',sans-serif;font-size:14px;overflow-x:hidden;}
+    .spectrum-bar{height:3px;background:var(--spectrum);}
+
+    /* NAV */
+    .topnav{position:sticky;top:0;z-index:100;height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);}
+    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+    .nav-logo{width:24px;height:24px;border-radius:50%;background:var(--spectrum);flex-shrink:0;}
+    .nav-brand-text{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:.06em;color:var(--text);}
+    .nav-right{display:flex;align-items:center;gap:12px;}
+    .nav-link{font-family:var(--mono);font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;transition:color .2s;}
+    .nav-link:hover{color:var(--text);}
+    .nav-cta{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;background:var(--accent-y);color:var(--ink);border:none;padding:7px 16px;cursor:pointer;text-decoration:none;white-space:nowrap;}
+
+    /* PAGE HEADER */
+    .page-header{padding:40px var(--pad) 0;}
+    .page-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-y);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+    .page-eyebrow::before{content:'';display:inline-block;width:20px;height:1px;background:var(--accent-y);}
+    .page-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,12vw,96px);letter-spacing:.01em;line-height:.9;margin-bottom:16px;}
+    .page-sub{font-size:14px;line-height:1.75;color:var(--muted);max-width:520px;margin-bottom:32px;}
+
+    /* COMPLETION BAR */
+    .completion-block{background:var(--surface2);border:1px solid var(--border);padding:16px 20px;margin:0 var(--pad) 28px;}
+    .completion-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+    .completion-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+    .completion-pct{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.04em;color:var(--accent-y);}
+    .progress-track{height:6px;background:rgba(255,255,255,.07);border-radius:0;}
+    .progress-fill{height:100%;background:var(--spectrum);transition:width .8s ease;}
+    .completion-sub{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:8px;letter-spacing:.04em;}
+
+    /* CONTROLS */
+    .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:0 var(--pad) 20px;}
+    .search-wrap{position:relative;flex:1;min-width:160px;}
+    .search-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:12px;padding:9px 14px 9px 34px;outline:none;letter-spacing:.04em;}
+    .search-input::placeholder{color:var(--muted);}
+    .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none;}
+    .filter-btn{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:8px 14px;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap;}
+    .filter-btn.active{border-color:var(--accent-y);color:var(--accent-y);background:rgba(245,200,0,.06);}
+    .filter-btn:hover:not(.active){color:var(--text);border-color:rgba(255,255,255,.18);}
+    .view-toggle{display:flex;border:1px solid var(--border);}
+    .view-btn{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:8px 14px;background:transparent;border:none;color:var(--muted);cursor:pointer;transition:all .15s;}
+    .view-btn.active{background:rgba(245,200,0,.1);color:var(--accent-y);}
+
+    /* CARD VIEW */
+    #cardView{padding:0 var(--pad) 40px;}
+    .hue-group{margin-bottom:36px;}
+    .hue-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+    .hue-label::after{content:'';flex:1;height:1px;background:var(--border);}
+    .cards-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
+    .cards-row::-webkit-scrollbar{height:3px;}
+    .cards-row::-webkit-scrollbar-track{background:var(--surface2);}
+    .cards-row::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);}
+    .color-card{flex-shrink:0;width:140px;scroll-snap-align:start;cursor:pointer;border:1px solid var(--border);transition:border-color .2s,transform .2s;text-decoration:none;display:block;}
+    .color-card:hover{border-color:rgba(255,255,255,.25);transform:translateY(-2px);}
+    .color-card.launched{border-color:rgba(245,200,0,.35);}
+    .card-swatch{height:100px;width:100%;}
+    .card-body{background:var(--surface2);padding:10px 12px;}
+    .card-name{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--text);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .card-hex{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.04em;margin-bottom:6px;}
+    .card-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border:1px solid;}
+    .card-badge.launched{border-color:var(--accent-y);color:var(--accent-y);}
+    .card-badge.available{border-color:var(--border);color:var(--muted);}
+
+    /* TABLE VIEW */
+    #tableView{display:none;padding:0 var(--pad) 40px;}
+    .data-table{width:100%;border-collapse:collapse;border:1px solid var(--border);}
+    .data-table th{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:10px 14px;text-align:left;background:var(--surface2);border-bottom:1px solid var(--border);white-space:nowrap;}
+    .data-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+    .data-table tr:last-child td{border-bottom:none;}
+    .data-table tr{cursor:pointer;transition:background .15s;}
+    .data-table tr:hover{background:var(--surface2);}
+    .td-swatch{width:28px;height:28px;border-radius:50%;display:inline-block;flex-shrink:0;}
+    .td-name{font-family:var(--mono);font-size:12px;color:var(--text);letter-spacing:.03em;}
+    .td-hex{font-family:var(--mono);font-size:11px;color:var(--muted);}
+    .td-hue{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+    .td-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border:1px solid;}
+    .td-badge.launched{border-color:var(--accent-y);color:var(--accent-y);}
+    .td-badge.available{border-color:var(--border);color:var(--muted);}
+
+    /* EMPTY STATE */
+    .empty{padding:48px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em;}
+  </style>
+</head>
+<body>
+<div class="spectrum-bar"></div>
+
+<nav class="topnav">
+  <a class="nav-brand" href="index.html">
+    <div class="nav-logo"></div>
+    <span class="nav-brand-text">Paint The Chain</span>
+  </a>
+  <div class="nav-right">
+    <a href="palette.html" class="nav-link" style="display:none;" id="navPalette">Pixel Palette</a>
+    <a href="dapp.html" class="nav-cta">Launch DApp</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-eyebrow">On-Chain Color Library</div>
+  <h1 class="page-title">The Spectrum</h1>
+  <p class="page-sub">The decentralized registry of all named colors. Each color can be launched as a Color Coin on Pump.fun. $COC holders vote on which colors enter the ecosystem next.</p>
+</div>
+
+<div class="completion-block" id="completionBlock">
+  <div class="completion-top">
+    <span class="completion-label">Spectrum Completion</span>
+    <span class="completion-pct" id="completionPct">0%</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="completion-sub" id="completionSub">Loading…</div>
+</div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input class="search-input" type="text" id="searchInput" placeholder="Search colors…" oninput="applyFilters()">
+  </div>
+  <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+  <button class="filter-btn" onclick="setFilter('launched',this)">Launched</button>
+  <button class="filter-btn" onclick="setFilter('available',this)">Available</button>
+  <div class="view-toggle">
+    <button class="view-btn active" id="btnCard" onclick="setView('card')">Cards</button>
+    <button class="view-btn" id="btnTable" onclick="setView('table')">Table</button>
+  </div>
+</div>
+
+<div id="cardView"></div>
+<div id="tableView">
+  <table class="data-table" id="dataTable">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Hex</th>
+        <th>RGB</th>
+        <th>Family</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div class="empty" id="tableEmpty" style="display:none;">No colors match your search.</div>
+</div>
+
+<script>
+// ── COLOR DATA (CSS named colors + metadata) ──
+const COLORS = [
+  // Reds
+  {name:'Red',hex:'#FF0000',rgb:'255,0,0',family:'Red',launched:true,coin:'$RED'},
+  {name:'Crimson',hex:'#DC143C',rgb:'220,20,60',family:'Red',launched:false},
+  {name:'Tomato',hex:'#FF6347',rgb:'255,99,71',family:'Red',launched:false},
+  {name:'IndianRed',hex:'#CD5C5C',rgb:'205,92,92',family:'Red',launched:false},
+  {name:'LightCoral',hex:'#F08080',rgb:'240,128,128',family:'Red',launched:false},
+  {name:'Salmon',hex:'#FA8072',rgb:'250,128,114',family:'Red',launched:false},
+  {name:'DarkRed',hex:'#8B0000',rgb:'139,0,0',family:'Red',launched:false},
+  {name:'Firebrick',hex:'#B22222',rgb:'178,34,34',family:'Red',launched:false},
+  // Pinks
+  {name:'HotPink',hex:'#FF69B4',rgb:'255,105,180',family:'Pink',launched:false},
+  {name:'DeepPink',hex:'#FF1493',rgb:'255,20,147',family:'Pink',launched:false},
+  {name:'Pink',hex:'#FFC0CB',rgb:'255,192,203',family:'Pink',launched:false},
+  {name:'LightPink',hex:'#FFB6C1',rgb:'255,182,193',family:'Pink',launched:false},
+  {name:'MediumVioletRed',hex:'#C71585',rgb:'199,21,133',family:'Pink',launched:false},
+  {name:'PaleVioletRed',hex:'#DB7093',rgb:'219,112,147',family:'Pink',launched:false},
+  // Oranges
+  {name:'OrangeRed',hex:'#FF4500',rgb:'255,69,0',family:'Orange',launched:false},
+  {name:'DarkOrange',hex:'#FF8C00',rgb:'255,140,0',family:'Orange',launched:false},
+  {name:'Orange',hex:'#FFA500',rgb:'255,165,0',family:'Orange',launched:false},
+  {name:'Coral',hex:'#FF7F50',rgb:'255,127,80',family:'Orange',launched:false},
+  // Yellows
+  {name:'Yellow',hex:'#FFFF00',rgb:'255,255,0',family:'Yellow',launched:false},
+  {name:'Gold',hex:'#FFD700',rgb:'255,215,0',family:'Yellow',launched:false},
+  {name:'LightYellow',hex:'#FFFFE0',rgb:'255,255,224',family:'Yellow',launched:false},
+  {name:'LemonChiffon',hex:'#FFFACD',rgb:'255,250,205',family:'Yellow',launched:false},
+  {name:'Khaki',hex:'#F0E68C',rgb:'240,230,140',family:'Yellow',launched:false},
+  {name:'DarkKhaki',hex:'#BDB76B',rgb:'189,183,107',family:'Yellow',launched:false},
+  {name:'PeachPuff',hex:'#FFDAB9',rgb:'255,218,185',family:'Yellow',launched:false},
+  {name:'Moccasin',hex:'#FFE4B5',rgb:'255,228,181',family:'Yellow',launched:false},
+  // Greens
+  {name:'Green',hex:'#008000',rgb:'0,128,0',family:'Green',launched:true,coin:'$GREEN'},
+  {name:'Lime',hex:'#00FF00',rgb:'0,255,0',family:'Green',launched:false},
+  {name:'LimeGreen',hex:'#32CD32',rgb:'50,205,50',family:'Green',launched:false},
+  {name:'ForestGreen',hex:'#228B22',rgb:'34,139,34',family:'Green',launched:false},
+  {name:'DarkGreen',hex:'#006400',rgb:'0,100,0',family:'Green',launched:false},
+  {name:'SeaGreen',hex:'#2E8B57',rgb:'46,139,87',family:'Green',launched:false},
+  {name:'MediumSeaGreen',hex:'#3CB371',rgb:'60,179,113',family:'Green',launched:false},
+  {name:'SpringGreen',hex:'#00FF7F',rgb:'0,255,127',family:'Green',launched:false},
+  {name:'MediumSpringGreen',hex:'#00FA9A',rgb:'0,250,154',family:'Green',launched:false},
+  {name:'GreenYellow',hex:'#ADFF2F',rgb:'173,255,47',family:'Green',launched:false},
+  {name:'Chartreuse',hex:'#7FFF00',rgb:'127,255,0',family:'Green',launched:false},
+  {name:'LawnGreen',hex:'#7CFC00',rgb:'124,252,0',family:'Green',launched:false},
+  {name:'OliveDrab',hex:'#6B8E23',rgb:'107,142,35',family:'Green',launched:false},
+  {name:'Olive',hex:'#808000',rgb:'128,128,0',family:'Green',launched:false},
+  {name:'DarkOliveGreen',hex:'#556B2F',rgb:'85,107,47',family:'Green',launched:false},
+  {name:'YellowGreen',hex:'#9ACD32',rgb:'154,205,50',family:'Green',launched:false},
+  // Cyans
+  {name:'Cyan',hex:'#00FFFF',rgb:'0,255,255',family:'Cyan',launched:false},
+  {name:'Aqua',hex:'#00FFFF',rgb:'0,255,255',family:'Cyan',launched:false},
+  {name:'Teal',hex:'#008080',rgb:'0,128,128',family:'Cyan',launched:false},
+  {name:'DarkCyan',hex:'#008B8B',rgb:'0,139,139',family:'Cyan',launched:false},
+  {name:'LightCyan',hex:'#E0FFFF',rgb:'224,255,255',family:'Cyan',launched:false},
+  {name:'PaleTurquoise',hex:'#AFEEEE',rgb:'175,238,238',family:'Cyan',launched:false},
+  {name:'Turquoise',hex:'#40E0D0',rgb:'64,224,208',family:'Cyan',launched:false},
+  {name:'MediumTurquoise',hex:'#48D1CC',rgb:'72,209,204',family:'Cyan',launched:false},
+  {name:'DarkTurquoise',hex:'#00CED1',rgb:'0,206,209',family:'Cyan',launched:false},
+  {name:'Aquamarine',hex:'#7FFFD4',rgb:'127,255,212',family:'Cyan',launched:false},
+  {name:'MediumAquamarine',hex:'#66CDAA',rgb:'102,205,170',family:'Cyan',launched:false},
+  {name:'CadetBlue',hex:'#5F9EA0',rgb:'95,158,160',family:'Cyan',launched:false},
+  // Blues
+  {name:'Blue',hex:'#0000FF',rgb:'0,0,255',family:'Blue',launched:true,coin:'$BLUE'},
+  {name:'MediumBlue',hex:'#0000CD',rgb:'0,0,205',family:'Blue',launched:false},
+  {name:'DarkBlue',hex:'#00008B',rgb:'0,0,139',family:'Blue',launched:false},
+  {name:'Navy',hex:'#000080',rgb:'0,0,128',family:'Blue',launched:false},
+  {name:'RoyalBlue',hex:'#4169E1',rgb:'65,105,225',family:'Blue',launched:false},
+  {name:'CornflowerBlue',hex:'#6495ED',rgb:'100,149,237',family:'Blue',launched:false},
+  {name:'SteelBlue',hex:'#4682B4',rgb:'70,130,180',family:'Blue',launched:false},
+  {name:'DodgerBlue',hex:'#1E90FF',rgb:'30,144,255',family:'Blue',launched:false},
+  {name:'DeepSkyBlue',hex:'#00BFFF',rgb:'0,191,255',family:'Blue',launched:false},
+  {name:'LightSkyBlue',hex:'#87CEEB',rgb:'135,206,235',family:'Blue',launched:false},
+  {name:'SkyBlue',hex:'#87CEEB',rgb:'135,206,235',family:'Blue',launched:false},
+  {name:'LightBlue',hex:'#ADD8E6',rgb:'173,216,230',family:'Blue',launched:false},
+  {name:'PowderBlue',hex:'#B0E0E6',rgb:'176,224,230',family:'Blue',launched:false},
+  {name:'LightSteelBlue',hex:'#B0C4DE',rgb:'176,196,222',family:'Blue',launched:false},
+  {name:'SlateBlue',hex:'#6A5ACD',rgb:'106,90,205',family:'Blue',launched:false},
+  {name:'MediumSlateBlue',hex:'#7B68EE',rgb:'123,104,238',family:'Blue',launched:false},
+  // Purples
+  {name:'Purple',hex:'#800080',rgb:'128,0,128',family:'Purple',launched:false},
+  {name:'Magenta',hex:'#FF00FF',rgb:'255,0,255',family:'Purple',launched:false},
+  {name:'Fuchsia',hex:'#FF00FF',rgb:'255,0,255',family:'Purple',launched:false},
+  {name:'Violet',hex:'#EE82EE',rgb:'238,130,238',family:'Purple',launched:false},
+  {name:'DarkViolet',hex:'#9400D3',rgb:'148,0,211',family:'Purple',launched:false},
+  {name:'BlueViolet',hex:'#8A2BE2',rgb:'138,43,226',family:'Purple',launched:false},
+  {name:'DarkOrchid',hex:'#9932CC',rgb:'153,50,204',family:'Purple',launched:false},
+  {name:'MediumOrchid',hex:'#BA55D3',rgb:'186,85,211',family:'Purple',launched:false},
+  {name:'Orchid',hex:'#DA70D6',rgb:'218,112,214',family:'Purple',launched:false},
+  {name:'MediumPurple',hex:'#9370DB',rgb:'147,112,219',family:'Purple',launched:false},
+  {name:'Plum',hex:'#DDA0DD',rgb:'221,160,221',family:'Purple',launched:false},
+  {name:'Thistle',hex:'#D8BFD8',rgb:'216,191,216',family:'Purple',launched:false},
+  {name:'Lavender',hex:'#E6E6FA',rgb:'230,230,250',family:'Purple',launched:false},
+  {name:'Indigo',hex:'#4B0082',rgb:'75,0,130',family:'Purple',launched:false},
+  {name:'DarkMagenta',hex:'#8B008B',rgb:'139,0,139',family:'Purple',launched:false},
+  {name:'RebeccaPurple',hex:'#663399',rgb:'102,51,153',family:'Purple',launched:false},
+  // Browns
+  {name:'Brown',hex:'#A52A2A',rgb:'165,42,42',family:'Brown',launched:false},
+  {name:'Maroon',hex:'#800000',rgb:'128,0,0',family:'Brown',launched:false},
+  {name:'SaddleBrown',hex:'#8B4513',rgb:'139,69,19',family:'Brown',launched:false},
+  {name:'Sienna',hex:'#A0522D',rgb:'160,82,45',family:'Brown',launched:false},
+  {name:'Peru',hex:'#CD853F',rgb:'205,133,63',family:'Brown',launched:false},
+  {name:'Chocolate',hex:'#D2691E',rgb:'210,105,30',family:'Brown',launched:false},
+  {name:'RosyBrown',hex:'#BC8F8F',rgb:'188,143,143',family:'Brown',launched:false},
+  {name:'Tan',hex:'#D2B48C',rgb:'210,180,140',family:'Brown',launched:false},
+  {name:'BurlyWood',hex:'#DEB887',rgb:'222,184,135',family:'Brown',launched:false},
+  {name:'Wheat',hex:'#F5DEB3',rgb:'245,222,179',family:'Brown',launched:false},
+  {name:'SandyBrown',hex:'#F4A460',rgb:'244,164,96',family:'Brown',launched:false},
+  // Whites / Grays
+  {name:'White',hex:'#FFFFFF',rgb:'255,255,255',family:'White',launched:false},
+  {name:'Snow',hex:'#FFFAFA',rgb:'255,250,250',family:'White',launched:false},
+  {name:'Ivory',hex:'#FFFFF0',rgb:'255,255,240',family:'White',launched:false},
+  {name:'FloralWhite',hex:'#FFFAF0',rgb:'255,250,240',family:'White',launched:false},
+  {name:'AntiqueWhite',hex:'#FAEBD7',rgb:'250,235,215',family:'White',launched:false},
+  {name:'Linen',hex:'#FAF0E6',rgb:'250,240,230',family:'White',launched:false},
+  {name:'OldLace',hex:'#FDF5E6',rgb:'253,245,230',family:'White',launched:false},
+  {name:'Seashell',hex:'#FFF5EE',rgb:'255,245,238',family:'White',launched:false},
+  {name:'Beige',hex:'#F5F5DC',rgb:'245,245,220',family:'White',launched:false},
+  {name:'MistyRose',hex:'#FFE4E1',rgb:'255,228,225',family:'White',launched:false},
+  {name:'Honeydew',hex:'#F0FFF0',rgb:'240,255,240',family:'White',launched:false},
+  {name:'MintCream',hex:'#F5FFFA',rgb:'245,255,250',family:'White',launched:false},
+  {name:'Azure',hex:'#F0FFFF',rgb:'240,255,255',family:'White',launched:false},
+  {name:'AliceBlue',hex:'#F0F8FF',rgb:'240,248,255',family:'White',launched:false},
+  {name:'GhostWhite',hex:'#F8F8FF',rgb:'248,248,255',family:'White',launched:false},
+  {name:'WhiteSmoke',hex:'#F5F5F5',rgb:'245,245,245',family:'White',launched:false},
+  // Grays
+  {name:'Gainsboro',hex:'#DCDCDC',rgb:'220,220,220',family:'Gray',launched:false},
+  {name:'LightGray',hex:'#D3D3D3',rgb:'211,211,211',family:'Gray',launched:false},
+  {name:'Silver',hex:'#C0C0C0',rgb:'192,192,192',family:'Gray',launched:false},
+  {name:'DarkGray',hex:'#A9A9A9',rgb:'169,169,169',family:'Gray',launched:false},
+  {name:'Gray',hex:'#808080',rgb:'128,128,128',family:'Gray',launched:false},
+  {name:'DimGray',hex:'#696969',rgb:'105,105,105',family:'Gray',launched:false},
+  {name:'LightSlateGray',hex:'#778899',rgb:'119,136,153',family:'Gray',launched:false},
+  {name:'SlateGray',hex:'#708090',rgb:'112,128,144',family:'Gray',launched:false},
+  {name:'DarkSlateGray',hex:'#2F4F4F',rgb:'47,79,79',family:'Gray',launched:false},
+  {name:'Black',hex:'#000000',rgb:'0,0,0',family:'Gray',launched:false},
+];
+
+const FAMILY_ORDER = ['Red','Pink','Orange','Yellow','Green','Cyan','Blue','Purple','Brown','White','Gray'];
+
+let currentFilter = 'all';
+let currentView = 'card';
+let searchTerm = '';
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function setView(v) {
+  currentView = v;
+  document.getElementById('btnCard').classList.toggle('active', v === 'card');
+  document.getElementById('btnTable').classList.toggle('active', v === 'table');
+  document.getElementById('cardView').style.display = v === 'card' ? '' : 'none';
+  document.getElementById('tableView').style.display = v === 'table' ? '' : 'none';
+  applyFilters();
+}
+
+function applyFilters() {
+  searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+  const filtered = COLORS.filter(c => {
+    const matchSearch = !searchTerm || c.name.toLowerCase().includes(searchTerm) || c.hex.toLowerCase().includes(searchTerm) || c.family.toLowerCase().includes(searchTerm);
+    const matchFilter = currentFilter === 'all' || (currentFilter === 'launched' && c.launched) || (currentFilter === 'available' && !c.launched);
+    return matchSearch && matchFilter;
+  });
+  if (currentView === 'card') renderCards(filtered);
+  else renderTable(filtered);
+}
+
+function colorUrl(c) {
+  return `spectrum-profile.html?name=${encodeURIComponent(c.name)}&hex=${encodeURIComponent(c.hex)}&rgb=${encodeURIComponent(c.rgb)}&family=${encodeURIComponent(c.family)}&launched=${c.launched}&coin=${encodeURIComponent(c.coin||'')}`;
+}
+
+function renderCards(filtered) {
+  const view = document.getElementById('cardView');
+  const byFamily = {};
+  FAMILY_ORDER.forEach(f => { byFamily[f] = []; });
+  filtered.forEach(c => { if (byFamily[c.family]) byFamily[c.family].push(c); });
+  let html = '';
+  FAMILY_ORDER.forEach(family => {
+    const cols = byFamily[family];
+    if (!cols.length) return;
+    html += `<div class="hue-group">
+      <div class="hue-label">${family}</div>
+      <div class="cards-row">`;
+    cols.forEach(c => {
+      html += `<a class="color-card${c.launched?' launched':''}" href="${colorUrl(c)}">
+        <div class="card-swatch" style="background:${c.hex};"></div>
+        <div class="card-body">
+          <div class="card-name">${c.name}</div>
+          <div class="card-hex">${c.hex}</div>
+          <span class="card-badge ${c.launched?'launched':'available'}">${c.launched?'● '+c.coin:'Available'}</span>
+        </div>
+      </a>`;
+    });
+    html += `</div></div>`;
+  });
+  if (!html) html = '<div class="empty">No colors match your search.</div>';
+  view.innerHTML = html;
+}
+
+function renderTable(filtered) {
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('tableEmpty');
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+  tbody.innerHTML = filtered.map(c => `
+    <tr onclick="window.location='${colorUrl(c)}'">
+      <td><span class="td-swatch" style="background:${c.hex};display:inline-block;"></span></td>
+      <td><span class="td-name">${c.name}</span></td>
+      <td><span class="td-hex">${c.hex}</span></td>
+      <td><span class="td-hex">rgb(${c.rgb})</span></td>
+      <td><span class="td-hue">${c.family}</span></td>
+      <td><span class="td-badge ${c.launched?'launched':'available'}">${c.launched?'● '+c.coin:'Available'}</span></td>
+    </tr>`).join('');
+}
+
+function updateCompletion() {
+  const launched = COLORS.filter(c => c.launched).length;
+  const total = COLORS.length;
+  const pct = Math.round((launched/total)*100);
+  document.getElementById('completionPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('completionSub').textContent = `${launched} of ${total} named colors launched as Color Coins`;
+}
+
+// init
+updateCompletion();
+applyFilters();
+document.getElementById('navPalette').style.display = '';
+</script>
+</body>
+</html>
