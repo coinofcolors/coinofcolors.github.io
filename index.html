@@ -94,6 +94,70 @@
     }
     .nav-cta:hover { background: #ffd929; }
 
+    /* ── HAMBURGER ── */
+    .nav-hamburger {
+      display: flex; flex-direction: column; justify-content: center;
+      gap: 5px; width: 36px; height: 36px;
+      background: none; border: 1px solid rgba(245,242,236,0.15);
+      cursor: pointer; padding: 8px; flex-shrink: 0;
+      transition: border-color 0.2s;
+    }
+    .nav-hamburger:hover { border-color: rgba(245,242,236,0.35); }
+    .nav-hamburger span {
+      display: block; height: 1.5px;
+      background: rgba(245,242,236,0.7);
+      transition: all 0.25s;
+      transform-origin: center;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ── MOBILE DRAWER ── */
+    .mobile-drawer {
+      display: none;
+      position: fixed; top: 56px; left: 0; right: 0; bottom: 0;
+      background: var(--ink);
+      z-index: 99;
+      flex-direction: column;
+      border-top: 1px solid rgba(245,242,236,0.08);
+      overflow-y: auto;
+    }
+    .mobile-drawer.open { display: flex; }
+
+    .drawer-links {
+      display: flex; flex-direction: column;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(245,242,236,0.07);
+    }
+    .drawer-links a {
+      font-family: var(--mono); font-size: 13px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(245,242,236,0.55); text-decoration: none;
+      padding: 16px var(--pad);
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .drawer-links a:hover, .drawer-links a:active {
+      color: var(--paper);
+      border-left-color: var(--accent-y);
+      background: rgba(245,200,0,0.04);
+    }
+    .drawer-links a.highlight { color: var(--accent-y); }
+    .drawer-cta { padding: var(--pad); }
+    .drawer-cta a {
+      display: block; text-align: center;
+      font-family: var(--mono); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--accent-y); color: var(--ink);
+      padding: 14px; text-decoration: none;
+    }
+
+    /* hide hamburger on desktop */
+    @media (min-width: 900px) {
+      .nav-hamburger { display: none; }
+    }
+
     /* ── HERO ── */
     .hero {
       background: var(--ink); color: var(--paper);
@@ -563,6 +627,69 @@
     @media (min-width: 1200px) {
       :root { --pad: 64px; }
     }
+
+    /* ── ECOSYSTEM SECTION ── */
+    .ecosystem { background: var(--ink); color: var(--paper); padding: 64px var(--pad); }
+    .ecosystem .section-tag { color: rgba(245,242,236,0.25); }
+    .ecosystem .section-title { color: var(--paper); }
+
+    .eco-grid {
+      display: grid; grid-template-columns: 1fr;
+      gap: 1px; background: rgba(245,242,236,0.07);
+      border: 1px solid rgba(245,242,236,0.07);
+    }
+
+    .eco-card {
+      background: var(--ink); padding: 36px 28px;
+      text-decoration: none; color: inherit;
+      display: block; position: relative; overflow: hidden;
+      transition: background 0.2s;
+    }
+    .eco-card:hover { background: #111110; }
+
+    .eco-card-accent { height: 3px; position: absolute; top: 0; left: 0; right: 0; }
+
+    .eco-card-tag {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(245,242,236,0.3); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .eco-card-tag-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    .eco-card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px; letter-spacing: 0.03em; line-height: 1;
+      color: var(--paper); margin-bottom: 12px;
+    }
+
+    .eco-card-desc {
+      font-size: 14px; line-height: 1.75;
+      color: rgba(245,242,236,0.5); margin-bottom: 24px;
+      max-width: 400px;
+    }
+
+    .eco-card-cta {
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 8px;
+      color: rgba(245,242,236,0.4); transition: color 0.2s;
+    }
+    .eco-card:hover .eco-card-cta { color: var(--paper); }
+    .eco-card-cta::after { content: '→'; transition: transform 0.2s; }
+    .eco-card:hover .eco-card-cta::after { transform: translateX(4px); }
+
+    .eco-card-bg-num {
+      position: absolute; right: 20px; bottom: 12px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 80px;
+      line-height: 1; opacity: 0.04; letter-spacing: -0.02em;
+      pointer-events: none;
+    }
+
+    @media (min-width: 600px) {
+      .eco-grid { grid-template-columns: 1fr 1fr; }
+      .ecosystem { padding: 96px var(--pad); }
+    }
   </style>
 </head>
 <body>
@@ -579,11 +706,31 @@
         <a href="#mechanism">Mechanism</a>
         <a href="#tokens">Tokenomics</a>
         <a href="#utility">Utility</a>
+        <a href="spectrum.html">Spectrum</a>
+        <a href="palette.html">Pixel Palette</a>
         <a href="#roadmap">Roadmap</a>
       </div>
       <a href="dapp.html" class="nav-cta">Launch DApp</a>
+      <button class="nav-hamburger" id="hamburger" onclick="toggleDrawer()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
+
+  <!-- MOBILE DRAWER -->
+  <div class="mobile-drawer" id="mobileDrawer">
+    <div class="drawer-links">
+      <a href="#mechanism" onclick="closeDrawer()">Mechanism</a>
+      <a href="#tokens" onclick="closeDrawer()">Tokenomics</a>
+      <a href="#utility" onclick="closeDrawer()">Utility</a>
+      <a href="#roadmap" onclick="closeDrawer()">Roadmap</a>
+      <a href="spectrum.html" class="highlight">The Spectrum</a>
+      <a href="palette.html" class="highlight">Pixel Palette</a>
+    </div>
+    <div class="drawer-cta">
+      <a href="dapp.html">Launch DApp</a>
+    </div>
+  </div>
 
   <header class="hero">
     <div class="hero-eyebrow fade-up">Utility-first · Solana + BSC · Decentralized spectrum</div>
@@ -743,6 +890,35 @@
     </div>
   </section>
 
+  <section class="ecosystem">
+    <div class="section-tag">Explore the Ecosystem</div>
+    <div class="section-title">Two Ways to<br>Go Deeper</div>
+    <div class="eco-grid">
+      <a href="spectrum.html" class="eco-card">
+        <div class="eco-card-accent" style="background: linear-gradient(90deg, #e63323, #1db954, #1a6cff);"></div>
+        <div class="eco-card-tag">
+          <span class="eco-card-tag-dot" style="background: var(--accent-g);"></span>
+          Phase 3 · Live Preview
+        </div>
+        <div class="eco-card-title">The Spectrum</div>
+        <p class="eco-card-desc">Browse all 140 named colors in the decentralized registry. See which have been launched as coins and vote to bring the next one on-chain.</p>
+        <span class="eco-card-cta">Explore the library</span>
+        <div class="eco-card-bg-num">01</div>
+      </a>
+      <a href="palette.html" class="eco-card">
+        <div class="eco-card-accent" style="background: linear-gradient(90deg, #9b3dff, #1a6cff);"></div>
+        <div class="eco-card-tag">
+          <span class="eco-card-tag-dot" style="background: var(--accent-p);"></span>
+          Phase 4 · Free Paint Now
+        </div>
+        <div class="eco-card-title">Pixel Palette</div>
+        <p class="eco-card-desc">Paint 32×32 pixel art using only colors from The Spectrum. Download your creation now — or hold $COC and mint it on-chain when Phase 4 launches.</p>
+        <span class="eco-card-cta">Start painting</span>
+        <div class="eco-card-bg-num">02</div>
+      </a>
+    </div>
+  </section>
+
   <section id="roadmap" class="roadmap">
     <div class="section-tag">Roadmap</div>
     <div class="section-title">The Phases</div>
@@ -793,6 +969,9 @@
     <div class="footer-left">
       <div class="footer-tagline">Play. Paint. Vote. Burn. Repeat.</div>
       <div class="footer-links">
+        <a href="spectrum.html">Spectrum</a>
+        <a href="palette.html">Pixel Palette</a>
+        <a href="dapp.html">DApp</a>
         <a href="https://paint-the-chain-coin-of-colors-d.gitbook.io/paint-the-chain-coin-of-colors-dao-docs/wXFS4C6M906oNWudBnvv/" target="_blank">Docs</a>
         <a href="https://x.com/coinofcolors" target="_blank">Twitter</a>
         <a href="https://t.me/coinofcolors" target="_blank">Telegram</a>
@@ -802,6 +981,25 @@
   </footer>
 
   <div class="spectrum-stripe"></div>
+
+  <script>
+    function toggleDrawer() {
+      const drawer = document.getElementById('mobileDrawer');
+      const burger = document.getElementById('hamburger');
+      drawer.classList.toggle('open');
+      burger.classList.toggle('open');
+      document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : '';
+    }
+    function closeDrawer() {
+      document.getElementById('mobileDrawer').classList.remove('open');
+      document.getElementById('hamburger').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    // Close drawer on resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 900) closeDrawer();
+    });
+  </script>
 
 </body>
 </html>
